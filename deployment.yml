@@ -17,5 +17,29 @@ spec:
       containers:
       - name: python-sample # container name
         image: python-app:v1
+      #############################################  
+      # # adding environment variable to the pods directly form config-map
+      # env:
+      #   - name: DB-PORT # name of variable
+      #     valueFrom:
+      #       configMapKeyRef:
+      #         name: test-cm # name of config-map
+      #         key: db-port  # name of key
+      #############################################
+        # volume strategy : mounting volume(db-connection)
+        volumeMounts: 
+          - name: db-connection # name of the volume to be mounted
+            mountPath: /opt # we can give any path here
+          - name: secret-db-connection
+            mountPath: /secret
         ports:
         - containerPort: 8000 # port on which app is running
+       
+      # volume strategy : creating a volume which is reading the data of config-map(test-cm)
+      volumes:
+        - name: db-connection
+          configMap: 
+            name: test-cm # name of the config-map
+        - name: secret-db-connection
+          secret:
+            secretName: my-secret # name of secret
